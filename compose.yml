@@ -1,0 +1,40 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  promo_app:
+    image: promo_app:latest
+    build: ./PromoFlyer
+    ports:
+      - 3100:3100
+    depends_on:
+      - rabbitmq
+  
+  shopping_msg:
+    image: shopping_msg:latest
+    # NOTE:
+    # It took me a whole day, if not two, to figure out why messaging didn't work:
+    # When `shopping_msg` started, `rabbitmq` hadn't started. This line makes sure `shopping_msg` start over later.
+    # 
+    # Earlier attemps to solve the problem:
+    # - shopping_msg was part of shopping_app. In order to figure out if the messaging part would work separately.
+    # - `depends_on` statement was added to all containers. It seems it didn't solve the problem. It seems there needed
+    #   to be more instructions in conjunction with the `depends_on` clause. 
+    restart: on-failure
+    build: ./ShoppingMsgConsumer
+    depends_on:
+      - rabbitmq
+      - promo_app
+  
+  shopping_app:
+    image: shopping_app:latest
+    build: ./ShoppingList
+    ports:
+      - 4300:4300
+    depends_on: 
+      - rabbitmq
+      - promo_app
+      - shopping_msg
