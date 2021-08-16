@@ -2,7 +2,7 @@
 
 This repo contains the code for a coding challenge I started working on back in W15.
 
-The coding challenge involves 1) creating two microservices using either Flask or Django and a database and 2) let the two microservices communicate via a message broker. There is a third part in the challenge and I didn't solve it.
+The coding challenge involves 1) creating two microservices and 2) letting the two microservices communicate via a message broker.
 
 ### Structure of the project
 
